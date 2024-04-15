@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use std::process;
+use std::env;
 use image::{open, Pixels, imageops, Rgba, DynamicImage, GenericImageView};
 
 const DESIRED_HEIGHT: u32 = 64;
@@ -11,7 +11,8 @@ fn main() -> Result<(), &'static str>{
 
     if args.len() < 2 {
         println!("Missing argument. Usage: {} <image path>", args[0]);
-        process::exit(1);
+        
+        return Err("exit now");
     }
 
     let img_scale: Vec<char> = String::from_str(" .:-=+*#%@").unwrap_or(String::new()).chars().collect();
@@ -19,7 +20,7 @@ fn main() -> Result<(), &'static str>{
     println!("{}", img_scale.len());
 
     let file_path = &args[1];
-    let img = image::open(file_path).expect("Failed to open image at {file_path}");
+    let img = open(file_path).expect("Failed to open image at {file_path}");
 
     let (width, height) = img.dimensions();
     let chunk_width = width / DESIRED_WIDTH;
