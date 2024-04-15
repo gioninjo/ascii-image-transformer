@@ -10,18 +10,11 @@ const DESIRED_WIDTH: u32 = 64;
 
 fn main() {
 
-    env::set_var("RUST_BACKTRACE", "1");
-
-
-    println!("Hello, world!");
-
-
-    // let img_scale: Vec<char> = String::from_str("@MBHENR#KWXDFPQASUZbdehx*8Gm&04LOVYkpq5Tagns69owz$CIu23Jcfry%1v7l+it[}?j|(=~!-/>\"';.").unwrap_or(String::new()).chars().rev().collect();
     let img_scale: Vec<char> = String::from_str(" .:-=+*#%@").unwrap_or(String::new()).chars().collect();
 
     println!("{}", img_scale.len());
 
-    let img = image::open("src/res/monster&co_meme.jpg").expect("Failed to open image");
+    let img = image::open("/home/gioninjo/projects/rust/ascii-image-transformer/src/res/cat-war.jpg").expect("Failed to open image");
     
     let (width, height) = img.dimensions();
     let chunk_width = width / DESIRED_WIDTH;
