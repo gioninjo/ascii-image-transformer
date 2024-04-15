@@ -1,5 +1,6 @@
 use std::str::FromStr;
 use std::env;
+use std::process;
 
 
 
@@ -10,12 +11,20 @@ const DESIRED_WIDTH: u32 = 64;
 
 fn main() {
 
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() < 2 {
+        println!("Missing argument. Usage: {} <image path>", args[0]);
+        process::exit(1);
+    }
+
     let img_scale: Vec<char> = String::from_str(" .:-=+*#%@").unwrap_or(String::new()).chars().collect();
 
     println!("{}", img_scale.len());
 
-    let img = image::open("/home/gioninjo/projects/rust/ascii-image-transformer/src/res/cat-war.jpg").expect("Failed to open image");
-    
+    let file_path = &args[1];
+    let img = image::open(file_path).expect("Failed to open image at {file_path}");
+
     let (width, height) = img.dimensions();
     let chunk_width = width / DESIRED_WIDTH;
     let chunk_height = height / DESIRED_HEIGHT;
@@ -44,7 +53,7 @@ fn main() {
             let start_y: u32 = line * chunk_height;
             let end_x: u32 = start_x + chunk_width + 1;
             let end_y: u32 = start_y + chunk_height + 1;
-            
+
             let mut chunk_shades_sum: u32 = 0;
 
             let default = 0;
@@ -76,13 +85,13 @@ fn main() {
     for char in chunks.iter() {
         print!("{} ", char)
     }
-    
+
 
 }
 
 
 // fn createChunks(pixels: &Pixels, desired_height: &i32, desired_width: &i32) -> void {
 
-    
+
 
 // }
