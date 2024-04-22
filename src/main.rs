@@ -47,8 +47,11 @@ fn main() -> Result<(), &'static str> {
 
     if args.len() == 4 {
         match args[3].as_str() {
-            "--dark-background" => scale.reverse(),
-            _ => scale = scale
+            "--dark" => scale.reverse(),
+            _ => {
+                print_usage(&args[0]);
+                return Err("unknown flag used!!");
+            }
         }
     }
 
@@ -205,5 +208,5 @@ fn parse_pair<T: FromStr>(s: &str, separator: char) -> Option<(T, T)> {
 
 
 fn print_usage(arg_zero: &str) -> () {
-    println!("Usage: {} <image path> <WIDTHxHEIGHT> (OPTIONAL)--dark-background", arg_zero)
+    println!("Usage: {} <image path> <WIDTHxHEIGHT> (OPTIONAL)--dark", arg_zero)
 }
