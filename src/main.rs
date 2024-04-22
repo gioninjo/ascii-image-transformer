@@ -2,15 +2,12 @@ use image::{imageops, open, DynamicImage, GenericImageView, Pixels, Rgba};
 use std::env;
 use std::str::FromStr;
 
-
 fn main() -> Result<(), &'static str> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 3 {
-        println!(
-            "Missing argument. Usage: {} <image path> <WIDTHxHEIGHT>",
-            args[0]
-        );
+        println!("Missing argument.");
+        print_usage(&args[0]);
 
         return Err("exit now");
     }
@@ -22,19 +19,27 @@ fn main() -> Result<(), &'static str> {
         Some((width, height)) => {
             desired_height = height;
             desired_width = width;
-        },
+        }
         None => {
             println!("Invalid desired dimensions!!");
+            print_usage(&args[0]);
             return Err("exit now");
         }
     }
+    let mut scale = *b"@%#*+=-:. "; 
 
-    let img_scale: Vec<char> = String::from_str(" .:-=+*#%@")
+
+    if args.len() == 4 {
+        match args[3].as_str() {
+            "--dark-background" => scale.reverse(),
+            _ => scale = scale
+        }
+    }
+
+    let img_scale: Vec<char> = String::from_utf8(Vec::from(scale))
         .unwrap_or(String::new())
         .chars()
         .collect();
-
-    println!("{}", img_scale.len());
 
     let file_path = &args[1];
     let img = open(file_path).expect("Failed to open image at {file_path}");
@@ -65,7 +70,15 @@ fn main() -> Result<(), &'static str> {
 
     let ascii_string: String;
 
-    match create_ascii_string(desired_width, desired_height, &gray_shades, &img_scale, &chunk_width, &chunk_height, &dim) {
+    match create_ascii_string(
+        desired_width,
+        desired_height,
+        &gray_shades,
+        &img_scale,
+        &chunk_width,
+        &chunk_height,
+        &dim,
+    ) {
         Ok(result) => ascii_string = result,
         Err(e) => return Err(e),
     }
@@ -167,4 +180,9 @@ fn parse_pair<T: FromStr>(s: &str, separator: char) -> Option<(T, T)> {
             _ => None,
         },
     }
+}
+
+
+fn print_usage(arg_zero: &str) -> () {
+    println!("Usage: {} <image path> <WIDTHxHEIGHT> (OPTIONAL)--dark-background", arg_zero)
 }
