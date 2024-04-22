@@ -42,6 +42,8 @@ fn main() -> Result<(), &'static str> {
     }
     let mut scale = *b"@%#*+=-:. "; 
 
+    let file_path: &String = &args[1];
+    let img = open(file_path).expect("Failed to open image at {file_path}");
 
     if args.len() == 4 {
         match args[3].as_str() {
@@ -55,9 +57,20 @@ fn main() -> Result<(), &'static str> {
         .chars()
         .collect();
 
-    let file_path = &args[1];
-    let img = open(file_path).expect("Failed to open image at {file_path}");
+    match asciify(desired_width, desired_height, img_scale, img) {
+        Ok(ascii_string) => println!("{}", ascii_string),
+        Err(e) => return Err(e),
+    };
 
+    Ok(())
+}
+
+fn asciify(
+    desired_width: u32,
+    desired_height: u32,
+    img_scale: Vec<char>,
+    img: DynamicImage
+) -> Result<String, &'static str> {
     let (width, height) = img.dimensions();
     let chunk_width = width / desired_width;
     let chunk_height = height / desired_height;
@@ -82,8 +95,6 @@ fn main() -> Result<(), &'static str> {
 
     let dim = resized_img.dimensions();
 
-    let ascii_string: String;
-
     match create_ascii_string(
         desired_width,
         desired_height,
@@ -93,13 +104,9 @@ fn main() -> Result<(), &'static str> {
         &chunk_height,
         &dim,
     ) {
-        Ok(result) => ascii_string = result,
+        Ok(result) => return Ok(result),
         Err(e) => return Err(e),
     }
-
-    print!("{}", ascii_string);
-
-    Ok(())
 }
 
 fn create_ascii_string(
