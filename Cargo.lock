@@ -47,6 +47,16 @@ checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
 name = "ascii-image-transformer"
 version = "0.1.0"
 dependencies = [
+ "asciiforger",
+ "image",
+]
+
+[[package]]
+name = "asciiforger"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "059e340d251b42a5be065e700edfb224827273cd9b8b6b0ee8712b59362abee1"
+dependencies = [
  "image",
 ]
 
