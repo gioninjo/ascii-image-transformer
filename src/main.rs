@@ -12,10 +12,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use ascii_raw::asciify_u8;
 use image::open;
-use asciiforger::asciify;
 use std::env;
 use std::str::FromStr;
+mod ascii_raw;
 
 fn main() -> Result<(), &'static str> {
     let args: Vec<String> = env::args().collect();
@@ -44,7 +45,22 @@ fn main() -> Result<(), &'static str> {
     let mut scale = *b"@%#*+=-:. "; 
 
     let file_path: &String = &args[1];
-    let img = open(file_path).expect("Failed to open image at {file_path}");
+    let img: image::DynamicImage = open(file_path).expect("Failed to open image at {file_path}");
+
+    let mut image_in_byte_vec = Vec::from(
+        format!("P6\n{} {}\n255\n", img.width(), img.height())
+            .as_bytes()
+    );
+
+    image_in_byte_vec.extend_from_slice(img.as_bytes());
+
+    let buffer: &[u8] = image_in_byte_vec.as_slice();
+
+
+    let image: image::DynamicImage = image::load_from_memory(buffer).unwrap();
+
+    image.save("/home/gioninjo/projects/rust/ascii-image-transformer/src/prova.png").unwrap();
+
 
     if args.len() == 4 {
         match args[3].as_str() {
@@ -60,8 +76,9 @@ fn main() -> Result<(), &'static str> {
         .unwrap_or(String::new())
         .chars()
         .collect();
+    
 
-    match asciify(desired_width, desired_height, img_scale, img) {
+    match asciify_u8(desired_width, desired_height, img_scale, buffer, img.width(), img.height()) {
         Ok(ascii_string) => println!("{}", ascii_string),
         Err(e) => return Err(e),
     };
