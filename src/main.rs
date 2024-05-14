@@ -13,7 +13,7 @@
  */
 
 use image::open;
-use asciiforger::asciify;
+use asciiforger::images::asciify;
 use std::env;
 use std::str::FromStr;
 
@@ -61,7 +61,7 @@ fn main() -> Result<(), &'static str> {
         .chars()
         .collect();
 
-    match asciify(desired_width, desired_height, img_scale, img) {
+    match asciify(desired_width, desired_height, &img_scale, &img) {
         Ok(ascii_string) => println!("{}", ascii_string),
         Err(e) => return Err(e),
     };
